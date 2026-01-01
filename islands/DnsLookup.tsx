@@ -12,18 +12,10 @@ const RecordTypes = [
   { value: "PTR", label: "PTR - Pointer Record" },
 ];
 
-const CommonNameServers = [
-  { value: "", label: "System Default" },
-  { value: "8.8.8.8", label: "Google (8.8.8.8)" },
-  { value: "1.1.1.1", label: "Cloudflare (1.1.1.1)" },
-  { value: "9.9.9.9", label: "Quad9 (9.9.9.9)" },
-  { value: "208.67.222.222", label: "OpenDNS (208.67.222.222)" },
-];
 
 interface DnsResult {
   recordType: string;
   domain: string;
-  nameServer: string | null;
   records: unknown[];
   queryTime: number;
 }
@@ -55,8 +47,6 @@ function updateHash(type: string, domain: string) {
 export default function DnsLookup() {
   const domain = useSignal("");
   const recordType = useSignal("A");
-  const nameServer = useSignal("");
-  const customNameServer = useSignal("");
   const isLoading = useSignal(false);
   const result = useSignal<DnsResult | null>(null);
   const error = useSignal<string | null>(null);
@@ -75,14 +65,10 @@ export default function DnsLookup() {
     isLoading.value = true;
 
     try {
-      const ns = customNameServer.value.trim() || nameServer.value || null;
       const params = new URLSearchParams({
         domain: domainValue,
         type: recordType.value,
       });
-      if (ns) {
-        params.set("nameServer", ns);
-      }
 
       const response = await fetch(`/api/dns?${params}`);
       const data = await response.json();
@@ -103,8 +89,6 @@ export default function DnsLookup() {
   const handleClear = () => {
     domain.value = "";
     recordType.value = "A";
-    nameServer.value = "";
-    customNameServer.value = "";
     result.value = null;
     error.value = null;
     updateHash("A", "");
@@ -210,48 +194,6 @@ export default function DnsLookup() {
           </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-              Name Server
-            </label>
-            <select
-              value={nameServer.value}
-              onChange={(e) => {
-                nameServer.value = (e.target as HTMLSelectElement).value;
-                if (nameServer.value) {
-                  customNameServer.value = "";
-                }
-              }}
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-              {CommonNameServers.map((ns) => (
-                <option key={ns.value} value={ns.value}>
-                  {ns.label}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-              Custom Name Server (IP)
-            </label>
-            <input
-              type="text"
-              value={customNameServer.value}
-              onInput={(e) => {
-                customNameServer.value = (e.target as HTMLInputElement).value;
-                if (customNameServer.value) {
-                  nameServer.value = "";
-                }
-              }}
-              placeholder="8.8.4.4"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm"
-            />
-          </div>
-        </div>
-
         {/* Action Buttons */}
         <div class="flex flex-wrap gap-3">
           <button
@@ -285,17 +227,11 @@ export default function DnsLookup() {
           </h3>
 
           <div class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <span class="text-sm text-gray-500">Record Type</span>
                 <p class="font-mono text-sm bg-gray-50 p-2 rounded mt-1">
                   {result.value.recordType}
-                </p>
-              </div>
-              <div>
-                <span class="text-sm text-gray-500">Name Server</span>
-                <p class="font-mono text-sm bg-gray-50 p-2 rounded mt-1">
-                  {result.value.nameServer || "System Default"}
                 </p>
               </div>
               <div>

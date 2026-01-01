@@ -19,7 +19,6 @@ export const handler = define.handlers({
     const url = new URL(ctx.req.url);
     const domain = url.searchParams.get("domain");
     const type = url.searchParams.get("type") as RecordType | null;
-    const nameServer = url.searchParams.get("nameServer");
 
     if (!domain) {
       return Response.json(
@@ -55,15 +54,7 @@ export const handler = define.handlers({
     try {
       const startTime = performance.now();
 
-      const options: Deno.ResolveDnsOptions = {};
-      if (nameServer) {
-        options.nameServer = {
-          ipAddr: nameServer,
-          port: 53,
-        };
-      }
-
-      const records = await Deno.resolveDns(domain, type, options);
+      const records = await Deno.resolveDns(domain, type);
 
       const endTime = performance.now();
       const queryTime = Math.round(endTime - startTime);
@@ -72,7 +63,6 @@ export const handler = define.handlers({
         success: true,
         domain,
         recordType: type,
-        nameServer: nameServer || null,
         records,
         queryTime,
       });
