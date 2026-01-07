@@ -16,6 +16,7 @@ const Resolvers = [
   { value: "google", label: "Google (8.8.8.8)" },
   { value: "cloudflare", label: "Cloudflare (1.1.1.1)" },
   { value: "cloudflare-security", label: "Cloudflare Security (1.1.1.2)" },
+  { value: "cloudflare-family", label: "Cloudflare Family (1.1.1.3)" },
   { value: "quad9", label: "Quad9 (9.9.9.9)" },
 ];
 

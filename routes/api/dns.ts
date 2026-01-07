@@ -215,6 +215,20 @@ async function resolveWithCloudflareSecurityDoH(
   );
 }
 
+async function resolveWithCloudflareFamilyDoH(
+  domain: string,
+  type: RecordType,
+  dnssecValidate: boolean = false
+): Promise<DoHResult> {
+  // Cloudflare Family DNS blocks malware, phishing, and adult content
+  return resolveWithCloudflareDoH(
+    domain,
+    type,
+    dnssecValidate,
+    "https://family.cloudflare-dns.com/dns-query"
+  );
+}
+
 async function resolveWithQuad9DoH(
   domain: string,
   type: RecordType,
@@ -275,6 +289,7 @@ export const handler = define.handlers({
         google: resolveWithGoogleDoH,
         cloudflare: resolveWithCloudflareDoH,
         "cloudflare-security": resolveWithCloudflareSecurityDoH,
+        "cloudflare-family": resolveWithCloudflareFamilyDoH,
         quad9: resolveWithQuad9DoH,
       };
 
