@@ -13,10 +13,10 @@ const RecordTypes = [
 ];
 
 const Resolvers = [
-  { value: "google", label: "Google DNS (DoH)" },
-  { value: "cloudflare", label: "Cloudflare DNS (DoH)" },
-  { value: "cloudflare-security", label: "Cloudflare (Filtered DoH)" },
-  { value: "quad9", label: "Quad9 DNS (DoH)" },
+  { value: "google", label: "Google (8.8.8.8)" },
+  { value: "cloudflare", label: "Cloudflare (1.1.1.1)" },
+  { value: "cloudflare-security", label: "Cloudflare Security (1.1.1.2)" },
+  { value: "quad9", label: "Quad9 (9.9.9.9)" },
 ];
 
 
