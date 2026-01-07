@@ -215,6 +215,20 @@ async function resolveWithCloudflareSecurityDoH(
   );
 }
 
+async function resolveWithQuad9DoH(
+  domain: string,
+  type: RecordType,
+  dnssecValidate: boolean = false
+): Promise<DoHResult> {
+  // Quad9 DoH - uses same JSON API format as Cloudflare
+  return resolveWithCloudflareDoH(
+    domain,
+    type,
+    dnssecValidate,
+    "https://dns.quad9.net/dns-query"
+  );
+}
+
 export const handler = define.handlers({
   async GET(ctx) {
     const url = new URL(ctx.req.url);
@@ -261,6 +275,7 @@ export const handler = define.handlers({
         google: resolveWithGoogleDoH,
         cloudflare: resolveWithCloudflareDoH,
         "cloudflare-security": resolveWithCloudflareSecurityDoH,
+        quad9: resolveWithQuad9DoH,
       };
 
       const resolveFn = resolvers[resolver] ?? resolvers.google;
